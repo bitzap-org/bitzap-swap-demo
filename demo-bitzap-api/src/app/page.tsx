@@ -1,47 +1,51 @@
 'use client'
 
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import Account from '@/components/Account';
+import { Flex } from '@radix-ui/themes';
+import WithContract from '@/components/WithContract';
+import WithNpm from '@/components/WithNpm';
+import { useAccount, useBalance } from 'wagmi';
+import { useEffect } from 'react';
 
 function App() {
   const account = useAccount()
-  const { connectors, connect, status, error } = useConnect()
-  const { disconnect } = useDisconnect()
+  const inputToken = "0x67d4b8c97cf54539c1e80767201b5571e831342a"; // USDT 输入代币地址
+  const outputToken = "0x40b45d6d774a0cc6eec380ed55528f3c9edb1e2c"; // USDC 输出代币地址
+
+  const { data: USDTData, refetch: refetchUSDTBalance } = useBalance({
+    address: account.address,
+    token: inputToken,
+  })
+  const { data: USDCData, refetch: refetchUSDCBalance } = useBalance({
+    address: account.address,
+    token: outputToken,
+  })
+
+  const refreshBalances = async () => {
+    console.log('refreshBalances');
+    refetchUSDTBalance()
+    refetchUSDCBalance()
+  }
+
+  useEffect(() => {
+    refreshBalances()
+  }, [account])
 
   return (
-    <>
-      <div>
-        <h2>Account</h2>
+    <Flex direction="column" gap="5">
+      <Account />
 
-        <div>
-          status: {account.status}
-          <br />
-          addresses: {JSON.stringify(account.addresses)}
-          <br />
-          chainId: {account.chainId}
-        </div>
+      <WithContract
+        balances={[USDTData?.formatted || '0', USDCData?.formatted || '0']}
+        refreshBalances={refreshBalances}
+      />
 
-        {account.status === 'connected' && (
-          <button type="button" onClick={() => disconnect()}>
-            Disconnect
-          </button>
-        )}
-      </div>
+      <WithNpm
+        balances={[USDTData?.formatted || '0', USDCData?.formatted || '0']}
+        refreshBalances={refreshBalances}
+      />
 
-      <div>
-        <h2>Connect</h2>
-        {connectors.map((connector) => (
-          <button
-            key={connector.uid}
-            onClick={() => connect({ connector })}
-            type="button"
-          >
-            {connector.name}
-          </button>
-        ))}
-        <div>{status}</div>
-        <div>{error?.message}</div>
-      </div>
-    </>
+    </Flex>
   )
 }
 

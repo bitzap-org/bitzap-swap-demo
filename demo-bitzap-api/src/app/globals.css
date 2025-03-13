@@ -1,3 +1,4 @@
+
 :root {
   background-color: #181818;
   color: rgba(255, 255, 255, 0.87);
@@ -18,4 +19,12 @@
     background-color: #f8f8f8;
     color: #181818;
   }
+}
+
+input{
+  background-color: transparent;
+  border: 1px solid #f1f1f1;
+  color: #000;
+  font-size: 16px;
+  padding: 2px 10px;
 }

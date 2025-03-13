@@ -1,10 +1,10 @@
-import iconLink from '../assets/images/link.svg'
 import { scanDomain } from '../utils'
+import { ExternalLinkIcon } from '@radix-ui/react-icons'
 
 export default function IconLink({href}: {href: string}) {
   return (
-    <a href={href} target="_blank">
-      <img src={iconLink} alt="link" />  
+    <a href={href} target="_blank" style={{display: 'flex', alignItems: 'center'}}>
+      <ExternalLinkIcon />
     </a>
   )
 }
